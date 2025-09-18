@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from core.database.repositories.visit import VisitRepository
 from core.api.dependencies.depends import get_visit_repository
@@ -6,7 +6,7 @@ from core.api.dependencies.depends import get_visit_repository
 router = APIRouter()
 
 
-@router.get("/get_visits")
+@router.get("/get_visits", status_code=status.HTTP_200_OK)
 async def get_visits(
     repository: VisitRepository = Depends(get_visit_repository),
 ) -> dict:
@@ -17,10 +17,10 @@ async def get_visits(
     """
 
     visits = await repository.get_one()
-    return {"status": 200, "visits": visits.counter or 0}
+    return {"status": status.HTTP_200_OK, "visits": visits.counter or 0}
 
 
-@router.post("/increment_visits")
+@router.post("/increment_visits", status_code=status.HTTP_200_OK)
 async def increment_visits(
     repository: VisitRepository = Depends(get_visit_repository),
 ) -> dict:
@@ -31,4 +31,4 @@ async def increment_visits(
     """
 
     await repository.add_one()
-    return {"status": 200, "message": "Incremented visits"}
+    return {"status": status.HTTP_200_OK, "message": "Incremented visits"}

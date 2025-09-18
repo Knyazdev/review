@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 
 import aiohttp
-from fastapi import Request
+from fastapi import Request, status
 
 
 class IPAddressHandler:
@@ -33,7 +33,7 @@ class IPAddressHandler:
         x_forwarded_for = self.request.headers.get("X-Forwarded-For")
         if x_forwarded_for:
             return x_forwarded_for.split(",")[0].strip()
-        
+
         return self.request.headers.get("X-Real-IP", self.request.client.host)
 
     async def _fetch_ip_location(self) -> Dict[str, Optional[str]]:
@@ -46,7 +46,7 @@ class IPAddressHandler:
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
-                if not response.status == 200:
+                if not response.status == status.HTTP_200_OK:
                     return {"error": "Unable to retrieve location"}
 
                 data = await response.json()
